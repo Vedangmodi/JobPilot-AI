@@ -2,10 +2,13 @@ package com.vedang.jobpilot_ai.util;
 
 import com.vedang.jobpilot_ai.dto.request.ApplicationRequest;
 import com.vedang.jobpilot_ai.dto.request.NoteRequest;
+import com.vedang.jobpilot_ai.dto.request.ReminderRequest;
 import com.vedang.jobpilot_ai.dto.response.ApplicationResponse;
 import com.vedang.jobpilot_ai.dto.response.NoteResponse;
+import com.vedang.jobpilot_ai.dto.response.ReminderResponse;
 import com.vedang.jobpilot_ai.entity.Application;
 import com.vedang.jobpilot_ai.entity.Note;
+import com.vedang.jobpilot_ai.entity.Reminder;
 
 public class MapperUtil {
     public static Application applicatonRequestToApplication(ApplicationRequest applicationRequest) {
@@ -62,5 +65,28 @@ public class MapperUtil {
         noteResponse.setApplicationId(note.getApplication().getId());
 
         return noteResponse;
+    }
+
+    public static Reminder reminderRequestToReminder(ReminderRequest reminderRequest){
+        Reminder reminder = new Reminder();
+
+        reminder.setMessage(reminderRequest.getMessage());
+        reminder.setReminderDate((reminderRequest.getReminderDate()));
+
+        return reminder;
+    }
+
+    public static ReminderResponse reminderToReminderResponse(Reminder reminder){
+        ReminderResponse reminderResponse = new ReminderResponse();
+
+        reminderResponse.setId(reminder.getId());
+        reminderResponse.setMessage(reminder.getMessage());
+        reminderResponse.setReminderDate(reminder.getReminderDate());
+        reminderResponse.setCompleted(reminder.isCompleted());
+        reminderResponse.setCreatedAt(reminder.getCreatedAt());
+        reminderResponse.setApplicationId(reminder.getApplication().getId());
+
+        return reminderResponse;
+
     }
 }

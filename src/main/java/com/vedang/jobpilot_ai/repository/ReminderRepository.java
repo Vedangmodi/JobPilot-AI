@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface ReminderRepository extends JpaRepository<Reminder, Long> {
     List<Reminder> findByApplication(Application application);
+
 }
