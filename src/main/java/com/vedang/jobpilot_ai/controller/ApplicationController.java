@@ -39,7 +39,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponse> getById(@PathVariable("/id") Long id, @RequestParam Long userId){
+    public ResponseEntity<ApplicationResponse> getById(@PathVariable("id") Long id, @RequestParam Long userId){
         ApplicationResponse response = applicationService.getById(id, userId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class ApplicationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponse> update(@RequestBody ApplicationRequest applicationRequest,
-                                                      @PathVariable("/id") Long id,
+                                                      @PathVariable("id") Long id,
                                                       @RequestParam Long userId){
         ApplicationResponse response = applicationService.update(applicationRequest, id, userId);
 
@@ -55,7 +55,7 @@ public class ApplicationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("/id") Long id, @RequestParam Long userId){
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id, @RequestParam Long userId){
         applicationService.delete(id, userId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
