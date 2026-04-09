@@ -27,4 +27,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
            @Param("search") String search
 
    );
+
+   @Query("Select count(a) from Application a where a.userId = :userId and a.status = :status")
+   Long countByUserIdAndStatus(@Param("userId") Long userId,
+                               @Param("status") ApplicationStatus status);
 }
