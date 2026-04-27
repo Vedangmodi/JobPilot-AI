@@ -10,6 +10,7 @@ import com.vedang.jobpilot_ai.exception.UnauthorizedException;
 import com.vedang.jobpilot_ai.repository.ApplicationRepository;
 import com.vedang.jobpilot_ai.repository.UserRepository;
 import com.vedang.jobpilot_ai.service.ApplicationService;
+import com.vedang.jobpilot_ai.util.AuthUtil;
 import com.vedang.jobpilot_ai.util.MapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,18 +31,24 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
+    private final AuthUtil authUtil;
 
-    public ApplicationServiceImpl(ApplicationRepository applicationRepository, UserRepository userRepository){
+
+    public ApplicationServiceImpl(ApplicationRepository applicationRepository, UserRepository userRepository, AuthUtil authUtil){
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
+        this.authUtil = authUtil;
     }
 
     @Override
-    public ApplicationResponse create(ApplicationRequest req, Long userId){
+//    public ApplicationResponse create(ApplicationRequest req, Long userId){
+    public ApplicationResponse create(ApplicationRequest req) {
         Application application = MapperUtil.applicatonRequestToApplication(req);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-        application.setUser(user);
+//        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+//        application.setUser(user);
+
+        User user = authUtil.getCurrentUser();
 
         Application savedApplication = applicationRepository.save(application);
 
@@ -52,15 +59,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<ApplicationResponse> getAll(Long userId){
+    public List<ApplicationResponse> getAll(){
 
 //        Optional<Application> optionalApplication = applicationRepository.findById(userId);
 //        if(optionalApplication.isEmpty()){
 //            throw new ResourceNotFoundException("Not Application Found!");
 //
 //        }  -- wrong
-
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+        User user = authUtil.getCurrentUser();
 
         List<Application> applications = applicationRepository.findByUser(user);
 
@@ -76,12 +82,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationResponse getById(Long id, Long userId){
-        User user = userRepository.findById(userId).orElseThrow(()  -> new ResourceNotFoundException("User Not Found!"));
-
+    public ApplicationResponse getById(Long id){
+        User user = authUtil.getCurrentUser();
         Application application = applicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Application Not Found!"));
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -91,12 +96,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationResponse update(ApplicationRequest applicationRequest, Long id, Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public ApplicationResponse update(ApplicationRequest applicationRequest, Long id){
+        User user = authUtil.getCurrentUser();
         Application application = applicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Application Not Found!"));
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -118,12 +122,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public void delete(Long id, Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public void delete(Long id){
+        User user = authUtil.getCurrentUser();
         Application application = applicationRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Application Not Found!"));
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -132,9 +135,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<ApplicationResponse> getAllWithFilter(Long userId, ApplicationStatus applicationStatus, String search){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public List<ApplicationResponse> getAllWithFilter(ApplicationStatus applicationStatus, String search){
+        User user = authUtil.getCurrentUser();
         List<Application> application = applicationRepository.findByUserWithFilter(user, applicationStatus, search);
 
         List<ApplicationResponse> list = new  ArrayList<>();
@@ -148,9 +150,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationResponse> getAllPaginated(Long userId, int page, int size){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public Page<ApplicationResponse> getAllPaginated(int page, int size){
+        User user = authUtil.getCurrentUser();
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Application> applications = applicationRepository.findByUser(user, pageable);
@@ -164,6 +165,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     }
+
+//    @Override
+//    public List<ApplicationResponse> getAppMoreThan10Notes(){
+//        List<Application> application = applicationRepository.findAppWithMoreThan10Notes();
+//
+//        List<ApplicationResponse> responses = new ArrayList<>();
+//
+//        for(Application app : application){
+//            responses.add(MapperUtil.applicationToApplicationResponse(app));
+//        }
+//
+//        return responses;
+//    }
 
 }
 

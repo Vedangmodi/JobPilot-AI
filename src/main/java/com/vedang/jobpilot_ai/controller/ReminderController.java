@@ -23,34 +23,31 @@ public class ReminderController {
 
     @PostMapping("/applications/{id}/reminders")
     public ResponseEntity<ReminderResponse> createReminder(@RequestBody ReminderRequest reminderRequest,
-                                                           @PathVariable Long id,
-                                                           @RequestParam Long userId){
-        ReminderResponse reminderResponse = reminderService.createReminder(reminderRequest, id, userId);
+                                                           @PathVariable Long id){
+        ReminderResponse reminderResponse = reminderService.createReminder(reminderRequest, id);
 
         return new ResponseEntity<>(reminderResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/applications/{id}/reminders")
-    public ResponseEntity<List<ReminderResponse>> getReminders(@PathVariable Long id,
-                                                               @RequestParam Long userId){
-        List<ReminderResponse> responses = reminderService.getReminders(id, userId);
+    public ResponseEntity<List<ReminderResponse>> getReminders(@PathVariable Long id){
+        List<ReminderResponse> responses = reminderService.getReminders(id);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @PutMapping("/reminders/{reminderId}/complete")
     public ResponseEntity<ReminderResponse> updateReminder(@RequestBody ReminderRequest reminderRequest,
-                                                              @PathVariable Long reminderId,
-                                                              @RequestParam Long userId){
-        ReminderResponse response = reminderService.updateReminder(reminderRequest, reminderId, userId);
+                                                              @PathVariable Long reminderId){
+        ReminderResponse response = reminderService.updateReminder(reminderRequest, reminderId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     @DeleteMapping("/reminders/{reminderId}")
-    public ResponseEntity<Void> deleteReminder(@RequestParam Long userId,@PathVariable Long reminderId){
-        reminderService.deleteReminder(userId, reminderId);
+    public ResponseEntity<Void> deleteReminder(@PathVariable Long reminderId){
+        reminderService.deleteReminder(reminderId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 

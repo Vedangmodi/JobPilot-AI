@@ -1,6 +1,8 @@
 package com.vedang.jobpilot_ai.entity;
 
+import com.vedang.jobpilot_ai.entity.enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -29,6 +31,9 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
 //    @OneToMany
 //    @JoinColumn(name = "user_id")
 //    List<Application> applications = new ArrayList<>();
@@ -36,37 +41,18 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(Long id, String name, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.role = role;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public void setId(Long id) {
@@ -92,4 +78,34 @@ public class User {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }
+
+

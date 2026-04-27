@@ -8,17 +8,17 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ApplicationService {
-    ApplicationResponse create(ApplicationRequest req, Long userId);
+    ApplicationResponse create(ApplicationRequest req);
 
-    List<ApplicationResponse> getAll(Long userId);
+    List<ApplicationResponse> getAll();
 
-    ApplicationResponse getById(Long id, Long userId);
+    ApplicationResponse getById(Long id);
 
-    ApplicationResponse update(ApplicationRequest applicationRequest, Long id, Long userId);
+    ApplicationResponse update(ApplicationRequest applicationRequest, Long id);
 
-    void delete(Long id, Long userId);
+    void delete(Long id);
 
-    List<ApplicationResponse> getAllWithFilter(Long usedId, ApplicationStatus applicationStatus, String search);
+    List<ApplicationResponse> getAllWithFilter(ApplicationStatus applicationStatus, String search);
 
-    Page<ApplicationResponse> getAllPaginated(Long userId, int page, int size);
+    Page<ApplicationResponse> getAllPaginated(int page, int size);
 }

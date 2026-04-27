@@ -13,6 +13,7 @@ import com.vedang.jobpilot_ai.repository.NoteRepository;
 import com.vedang.jobpilot_ai.repository.ReminderRepository;
 import com.vedang.jobpilot_ai.repository.UserRepository;
 import com.vedang.jobpilot_ai.service.ReminderService;
+import com.vedang.jobpilot_ai.util.AuthUtil;
 import com.vedang.jobpilot_ai.util.MapperUtil;
 import org.springframework.stereotype.Service;
 
@@ -25,22 +26,24 @@ public class ReminderServiceImpl implements ReminderService{
     private final UserRepository userRepository;
     private final ApplicationRepository applicationRepository;
     private final ReminderRepository reminderRepository;
+    private final AuthUtil authUtil;
 
-    public ReminderServiceImpl(UserRepository userRepository, ApplicationRepository applicationRepository, ReminderRepository reminderRepository){
+    public ReminderServiceImpl(UserRepository userRepository, ApplicationRepository applicationRepository, ReminderRepository reminderRepository, AuthUtil authUtil){
         this.userRepository = userRepository;
         this.applicationRepository = applicationRepository;
         this.reminderRepository = reminderRepository;
+        this.authUtil = authUtil;
     }
 
 
     @Override
-    public ReminderResponse createReminder(ReminderRequest reminderRequest, Long id, Long userId){
-//        return null;
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+    public ReminderResponse createReminder(ReminderRequest reminderRequest, Long id){
+//        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+        User user = authUtil.getCurrentUser();
 
         Application application = applicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Application Not Found!"));
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -55,12 +58,11 @@ public class ReminderServiceImpl implements ReminderService{
     }
 
     @Override
-    public List<ReminderResponse> getReminders(Long id, Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public List<ReminderResponse> getReminders(Long id){
+        User user = authUtil.getCurrentUser();
         Application application = applicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Application Not Found!"));
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -77,14 +79,13 @@ public class ReminderServiceImpl implements ReminderService{
     }
 
     @Override
-    public ReminderResponse updateReminder(ReminderRequest reminderRequest, Long reminderId, Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public ReminderResponse updateReminder(ReminderRequest reminderRequest, Long reminderId){
+        User user = authUtil.getCurrentUser();
         Reminder reminder = reminderRepository.findById(reminderId).orElseThrow(() -> new ResourceNotFoundException("Reminder Not Found"));
 
         Application application = reminder.getApplication();
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -99,14 +100,13 @@ public class ReminderServiceImpl implements ReminderService{
     }
 
     @Override
-    public void deleteReminder(Long userId, Long reminderId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public void deleteReminder(Long reminderId){
+        User user = authUtil.getCurrentUser();
         Reminder reminder = reminderRepository.findById(reminderId).orElseThrow(() -> new ResourceNotFoundException("Reminder Not Found"));
 
         Application application = reminder.getApplication();
 
-        if(!application.getUser().getId().equals(userId)){
+        if(!application.getUser().getId().equals(user.getId())){
             throw new UnauthorizedException("You are not authorized to delete this Reminder");
         }
 

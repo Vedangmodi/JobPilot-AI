@@ -7,11 +7,11 @@ import com.vedang.jobpilot_ai.entity.Reminder;
 import java.util.List;
 
 public interface ReminderService {
-    ReminderResponse createReminder(ReminderRequest reminderRequest, Long id, Long userId);
+    ReminderResponse createReminder(ReminderRequest reminderRequest, Long id);
 
-    List<ReminderResponse> getReminders(Long id, Long userId);
+    List<ReminderResponse> getReminders(Long id);
 
-    ReminderResponse updateReminder(ReminderRequest reminderRequest, Long reminderId, Long userId);
+    ReminderResponse updateReminder(ReminderRequest reminderRequest, Long reminderId);
 
-    void deleteReminder(Long userId, Long reminderId);
+    void deleteReminder(Long reminderId);
 }

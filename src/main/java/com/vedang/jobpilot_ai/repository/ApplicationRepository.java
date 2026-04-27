@@ -28,7 +28,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
    );
 
-   @Query("Select count(a) from Application a where a.userId = :userId and a.status = :status")
+//   @Query("Select count(a) from Application a where a.userId = :userId and a.status = :status")
+@Query("Select count(a) from Application a where a.user.id = :userId and a.status = :status")
    Long countByUserIdAndStatus(@Param("userId") Long userId,
                                @Param("status") ApplicationStatus status);
+
+
+   @Query("Select a from Application a where " + "(Select count(n) from Note n where n.application = a) > 10 ")
+   List<Application> findAppWithMoreThan10Notes();
 }

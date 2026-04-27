@@ -6,9 +6,9 @@ import com.vedang.jobpilot_ai.dto.response.NoteResponse;
 import java.util.List;
 
 public interface NoteService {
-    NoteResponse createNote(NoteRequest noteRequest, Long id, Long userId);
+    NoteResponse createNote(NoteRequest noteRequest, Long id);
 
-    List<NoteResponse> getNotes(Long id, Long userId);
+    List<NoteResponse> getNotes(Long id);
 
-    void deleteNote(Long userId, Long noteId);
+    void deleteNote(Long userId);
 }

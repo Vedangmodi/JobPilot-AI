@@ -19,8 +19,8 @@ public class DashboardController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<DashboardResponse> getDashboard(@RequestParam Long userId){
-        DashboardResponse response =  dashboardService.getDashboard(userId);
+    public ResponseEntity<DashboardResponse> getDashboard(){
+        DashboardResponse response =  dashboardService.getDashboard();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 

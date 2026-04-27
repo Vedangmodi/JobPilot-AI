@@ -8,29 +8,32 @@ import com.vedang.jobpilot_ai.exception.ResourceNotFoundException;
 import com.vedang.jobpilot_ai.repository.ApplicationRepository;
 import com.vedang.jobpilot_ai.repository.UserRepository;
 import com.vedang.jobpilot_ai.service.DashboardService;
+import com.vedang.jobpilot_ai.util.AuthUtil;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
     private final UserRepository userRepository;
     private final ApplicationRepository applicationRepository;
+    private final AuthUtil authUtil;
 
-    public DashboardServiceImpl(UserRepository userRepository, ApplicationRepository applicationRepository){
+    public DashboardServiceImpl(UserRepository userRepository, ApplicationRepository applicationRepository, AuthUtil authUtil){
         this.userRepository = userRepository;
         this.applicationRepository = applicationRepository;
+        this.authUtil = authUtil;
     }
 
-    public DashboardResponse getDashboard(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public DashboardResponse getDashboard(){
+//        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+        User user = authUtil.getCurrentUser();
         DashboardResponse response = new DashboardResponse();
 
-        response.setApplied(applicationRepository.countByUserIdAndStatus(userId, ApplicationStatus.APPLIED));
-        response.setOa(applicationRepository.countByUserIdAndStatus(userId, ApplicationStatus.OA));
-        response.setInterview(applicationRepository.countByUserIdAndStatus(userId, ApplicationStatus.INTERVIEW));
-        response.setRejected(applicationRepository.countByUserIdAndStatus(userId, ApplicationStatus.REJECTED));
-        response.setOffer(applicationRepository.countByUserIdAndStatus(userId, ApplicationStatus.OFFER));
-        response.setGhosted(applicationRepository.countByUserIdAndStatus(userId, ApplicationStatus.GHOSTED));
+        response.setApplied(applicationRepository.countByUserIdAndStatus(user.getId(), ApplicationStatus.APPLIED));
+        response.setOa(applicationRepository.countByUserIdAndStatus(user.getId(), ApplicationStatus.OA));
+        response.setInterview(applicationRepository.countByUserIdAndStatus(user.getId(), ApplicationStatus.INTERVIEW));
+        response.setRejected(applicationRepository.countByUserIdAndStatus(user.getId(), ApplicationStatus.REJECTED));
+        response.setOffer(applicationRepository.countByUserIdAndStatus(user.getId(), ApplicationStatus.OFFER));
+        response.setGhosted(applicationRepository.countByUserIdAndStatus(user.getId(), ApplicationStatus.GHOSTED));
 
         Long total = response.getApplied() + response.getOa() + response.getInterview() + response.getRejected() + response.getOffer() + response.getGhosted();
 

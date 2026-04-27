@@ -23,64 +23,69 @@ public class ApplicationController {
     }
 
     @PostMapping()
-    public ResponseEntity<ApplicationResponse> create(@RequestBody ApplicationRequest req, @RequestParam Long userId){
-        ApplicationResponse applicationResponse = applicationService.create(req, userId);
+    public ResponseEntity<ApplicationResponse> create(@RequestBody ApplicationRequest req){
+        ApplicationResponse applicationResponse = applicationService.create(req);
 
         return new ResponseEntity<>(applicationResponse, HttpStatus.CREATED);
 
     }
 
     @GetMapping()
-    public ResponseEntity<List<ApplicationResponse>> getAll(@RequestParam Long userId){
-        List<ApplicationResponse> response = applicationService.getAll(userId);
+    public ResponseEntity<List<ApplicationResponse>> getAll(){
+        List<ApplicationResponse> response = applicationService.getAll();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationResponse> getById(@PathVariable("id") Long id, @RequestParam Long userId){
-        ApplicationResponse response = applicationService.getById(id, userId);
+    public ResponseEntity<ApplicationResponse> getById(@PathVariable("id") Long id){
+        ApplicationResponse response = applicationService.getById(id);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApplicationResponse> update(@RequestBody ApplicationRequest applicationRequest,
-                                                      @PathVariable("id") Long id,
-                                                      @RequestParam Long userId){
-        ApplicationResponse response = applicationService.update(applicationRequest, id, userId);
+                                                      @PathVariable("id") Long id){
+        ApplicationResponse response = applicationService.update(applicationRequest, id);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id, @RequestParam Long userId){
-        applicationService.delete(id, userId);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id){
+        applicationService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<ApplicationResponse>> getAllWithFilter(@RequestParam Long userId,
-                                                                      @RequestParam(required = false) ApplicationStatus applicationStatus,
+    public ResponseEntity<List<ApplicationResponse>> getAllWithFilter(@RequestParam(required = false) ApplicationStatus applicationStatus,
                                                                       @RequestParam(required = false) String search){
-        List<ApplicationResponse> response = applicationService.getAllWithFilter(userId, applicationStatus, search);
+        List<ApplicationResponse> response = applicationService.getAllWithFilter(applicationStatus, search);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/pagination")
-    public ResponseEntity<Page<ApplicationResponse>> getAllPaginated(@RequestParam Long userId,
-                                                                     @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<ApplicationResponse>> getAllPaginated(@RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int size){
 
-        Page<ApplicationResponse> response = applicationService.getAllPaginated(userId, page, size );
+        Page<ApplicationResponse> response = applicationService.getAllPaginated(page, size );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+//    @GetMapping("/more-than-10-notes")
+//
+//    public ResponseEntity<List<ApplicationResponse>> getAppMoreThan10Notes(){
+//        List<ApplicationResponse> res = applicationService.getAppMoreThan10Notes();
+//
+//        return new ResponseEntity<>(res, HttpStatus.OK);
+//    }
 
 
 

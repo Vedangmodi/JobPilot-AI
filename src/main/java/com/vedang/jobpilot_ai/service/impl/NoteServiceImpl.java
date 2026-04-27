@@ -11,6 +11,7 @@ import com.vedang.jobpilot_ai.repository.ApplicationRepository;
 import com.vedang.jobpilot_ai.repository.NoteRepository;
 import com.vedang.jobpilot_ai.repository.UserRepository;
 import com.vedang.jobpilot_ai.service.NoteService;
+import com.vedang.jobpilot_ai.util.AuthUtil;
 import com.vedang.jobpilot_ai.util.MapperUtil;
 import org.springframework.stereotype.Service;
 
@@ -23,21 +24,23 @@ public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
+    private final AuthUtil authUtil;
 
-    public NoteServiceImpl(NoteRepository noteRepository, ApplicationRepository applicationRepository , UserRepository userRepository){
+    public NoteServiceImpl(NoteRepository noteRepository, ApplicationRepository applicationRepository , UserRepository userRepository, AuthUtil authUtil){
         this.noteRepository = noteRepository;
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
+        this.authUtil = authUtil;
     }
 
     @Override
-    public NoteResponse createNote(NoteRequest noteRequest, Long id, Long userId){
+    public NoteResponse createNote(NoteRequest noteRequest, Long id){
 
-        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User Not Found!"));
-
+//        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User Not Found!"));
+        User user = authUtil.getCurrentUser();
         Application application = applicationRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Application Not Found!"));
 
-        if (!application.getUser().getId().equals(userId)) {
+        if (!application.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -54,12 +57,12 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public List<NoteResponse> getNotes(Long id, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
+    public List<NoteResponse> getNotes(Long id) {
+        User user = authUtil.getCurrentUser();
 
         Application application = applicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Application Not Found!"));
 
-        if (!application.getUser().getId().equals(userId)) {
+        if (!application.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedException("You are not authorized to view this application");
         }
 
@@ -76,13 +79,12 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void deleteNote(Long userId, Long noteId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
-
+    public void deleteNote(Long noteId){
+        User user = authUtil.getCurrentUser();
         Note note = noteRepository.findById(noteId).orElseThrow(() -> new ResourceNotFoundException("Note Not Found!"));
         Application application = note.getApplication();
 
-        if (!application.getUser().getId().equals(userId)) {
+        if (!application.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedException("You are not authorized to delete this note");
         }
 
@@ -90,3 +92,5 @@ public class NoteServiceImpl implements NoteService {
 
     }
 }
+
+//find applications those have more than 10 notes
