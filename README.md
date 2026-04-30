@@ -305,9 +305,3 @@ Only `/api/auth/**` is public. Everything else requires JWT.
   - Verify MySQL is running
   - Verify DB name/user/password in `application.properties`
 
-
-
-## Notes
-
-- This project currently stores sensitive values in `application.properties`.
-- For production, move secrets to environment variables or a secrets manager.
