@@ -3,6 +3,7 @@ package com.vedang.jobpilot_ai.entity;
 import com.vedang.jobpilot_ai.entity.enums.ApplicationStatus;
 import com.vedang.jobpilot_ai.entity.enums.SourceType;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "application")
 public class Application {

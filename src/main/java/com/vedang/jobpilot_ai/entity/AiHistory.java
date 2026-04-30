@@ -2,10 +2,12 @@ package com.vedang.jobpilot_ai.entity;
 
 import com.vedang.jobpilot_ai.entity.enums.AiFeatureType;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "ai_history")
 public class AiHistory {

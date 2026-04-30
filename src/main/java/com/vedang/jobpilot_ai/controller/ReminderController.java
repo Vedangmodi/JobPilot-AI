@@ -5,6 +5,7 @@ import com.vedang.jobpilot_ai.dto.response.ApplicationResponse;
 import com.vedang.jobpilot_ai.dto.response.ReminderResponse;
 import com.vedang.jobpilot_ai.entity.Reminder;
 import com.vedang.jobpilot_ai.service.ReminderService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ReminderController {
     }
 
     @PostMapping("/applications/{id}/reminders")
-    public ResponseEntity<ReminderResponse> createReminder(@RequestBody ReminderRequest reminderRequest,
+    public ResponseEntity<ReminderResponse> createReminder(@Valid @RequestBody ReminderRequest reminderRequest,
                                                            @PathVariable Long id){
         ReminderResponse reminderResponse = reminderService.createReminder(reminderRequest, id);
 
@@ -37,7 +38,7 @@ public class ReminderController {
     }
 
     @PutMapping("/reminders/{reminderId}/complete")
-    public ResponseEntity<ReminderResponse> updateReminder(@RequestBody ReminderRequest reminderRequest,
+    public ResponseEntity<ReminderResponse> updateReminder(@Valid @RequestBody ReminderRequest reminderRequest,
                                                               @PathVariable Long reminderId){
         ReminderResponse response = reminderService.updateReminder(reminderRequest, reminderId);
 

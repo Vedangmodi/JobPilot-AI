@@ -5,6 +5,7 @@ import com.vedang.jobpilot_ai.dto.response.ApplicationResponse;
 import com.vedang.jobpilot_ai.entity.User;
 import com.vedang.jobpilot_ai.entity.enums.ApplicationStatus;
 import com.vedang.jobpilot_ai.service.ApplicationService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ApplicationController {
     }
 
     @PostMapping()
-    public ResponseEntity<ApplicationResponse> create(@RequestBody ApplicationRequest req){
+    public ResponseEntity<ApplicationResponse> create(@Valid @RequestBody ApplicationRequest req){
         ApplicationResponse applicationResponse = applicationService.create(req);
 
         return new ResponseEntity<>(applicationResponse, HttpStatus.CREATED);
@@ -46,7 +47,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApplicationResponse> update(@RequestBody ApplicationRequest applicationRequest,
+    public ResponseEntity<ApplicationResponse> update(@Valid @RequestBody ApplicationRequest applicationRequest,
                                                       @PathVariable("id") Long id){
         ApplicationResponse response = applicationService.update(applicationRequest, id);
 

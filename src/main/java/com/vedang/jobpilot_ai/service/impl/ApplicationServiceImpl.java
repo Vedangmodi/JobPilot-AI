@@ -50,6 +50,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         User user = authUtil.getCurrentUser();
 
+        application.setUser(user);
+
         Application savedApplication = applicationRepository.save(application);
 
         ApplicationResponse applicationResponse = MapperUtil.applicationToApplicationResponse(savedApplication);

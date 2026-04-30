@@ -3,6 +3,7 @@ package com.vedang.jobpilot_ai.controller;
 import com.vedang.jobpilot_ai.dto.request.NoteRequest;
 import com.vedang.jobpilot_ai.dto.response.NoteResponse;
 import com.vedang.jobpilot_ai.service.NoteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class NoteController {
     }
 
     @PostMapping("/api/applications/{applicationid}/notes")
-    public ResponseEntity<NoteResponse> createNote(@RequestBody NoteRequest noteRequest,
+    public ResponseEntity<NoteResponse> createNote(@Valid @RequestBody NoteRequest noteRequest,
                                                    @PathVariable("applicationid") Long id){
         NoteResponse response = noteService.createNote(noteRequest, id);
 

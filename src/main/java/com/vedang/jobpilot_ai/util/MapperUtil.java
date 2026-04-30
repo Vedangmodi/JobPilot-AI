@@ -23,6 +23,7 @@ public class MapperUtil {
         application.setSource(applicationRequest.getSource());
         application.setNotesSummary(applicationRequest.getNotesSummary());
         application.setAppliedDate(applicationRequest.getAppliedDate());
+        application.setJobDescription(applicationRequest.getJobDescription());
 
         return application;
     }
