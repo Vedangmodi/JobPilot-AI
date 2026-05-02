@@ -3,6 +3,7 @@ package com.vedang.jobpilot_ai.config;
 import com.vedang.jobpilot_ai.entity.User;
 import com.vedang.jobpilot_ai.exception.ResourceNotFoundException;
 import com.vedang.jobpilot_ai.repository.UserRepository;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -34,6 +35,12 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
         throws ServletException, IOException{
 
+        String requestPath = request.getRequestURI();
+        if (requestPath.startsWith("/api/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -43,30 +50,35 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        String email = jwtUtil.extractEmail(token);
+        try {
+            String email = jwtUtil.extractEmail(token);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // Load user from DB by email
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                // Load user from DB by email
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-            // Validate token against this user
-            if (jwtUtil.isTokenValid(token, new org.springframework.security.core.userdetails.User(
-                    user.getEmail(), user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-            ))) {
-                //  Create authentication object and put it in Spring's security context
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                user,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                        );
+                // Validate token against this user
+                if (jwtUtil.isTokenValid(token, new org.springframework.security.core.userdetails.User(
+                        user.getEmail(), user.getPassword(),
+                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                ))) {
+                    // Create authentication object and put it in Spring's security context
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    user,
+                                    null,
+                                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                            );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (JwtException | IllegalArgumentException ex) {
+            // Ignore malformed/expired tokens and continue without authentication.
+            SecurityContextHolder.clearContext();
         }
 
         // Continue to next filter / controller
