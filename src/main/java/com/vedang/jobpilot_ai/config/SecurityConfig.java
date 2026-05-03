@@ -21,8 +21,8 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
-    /** Comma-separated exact origins (Vercel preview URLs must be listed explicitly). */
-    @Value("${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}")
+    /** Comma-separated exact origins (add preview URLs via APP_CORS_ALLOWED_ORIGINS on Render). */
+    @Value("${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://job-pilot-ai-frontend.vercel.app}")
     private String corsAllowedOrigins;
 
     public SecurityConfig(JwtFilter jwtFilter) {
